@@ -16,9 +16,23 @@ repositories {
   mavenCentral()
 }
 
-fun kotlinx(name: String, version: String): String = "org.jetbrains.kotlinx:kotlinx-$name:$version"
+configurations {
+  create("codegenCompile") {
+    extendsFrom(implementation.get(), api.get())
+  }
+}
+
+sourceSets {
+  create("codegen") {
+    java {
+      compileClasspath += configurations["codegenCompile"]
+    }
+  }
+}
 
 dependencies {
+  api("org.jetbrains.kotlin:kotlin-stdlib:1.5.31")
+  api("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.5.31")
   api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.0")
 
   @Suppress("GradlePackageUpdate")
@@ -32,6 +46,8 @@ dependencies {
   testImplementation(kotlin("test", "1.5.31"))
   testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.1")
   testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.1")
+
+  add("codegenCompile", "de.brudaswen.kotlinx.serialization:kotlinx-serialization-csv:2.0.0")
 }
 
 tasks.withType<KotlinCompile> {

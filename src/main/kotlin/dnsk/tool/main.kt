@@ -1,4 +1,4 @@
 @file:JvmName("Main")
 package dnsk.tool
 
-fun main(args: Array<String>) {}
+fun main(args: Array<String>) = DnskTool().main(args)
