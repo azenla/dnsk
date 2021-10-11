@@ -9,7 +9,10 @@ import kotlinx.serialization.csv.Csv
 import java.nio.charset.StandardCharsets
 import java.nio.file.Path
 import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.io.path.readLines
 import kotlin.io.path.readText
+import kotlin.io.path.writeLines
 
 @Serializable
 data class IanaRcodeEntry(
@@ -72,15 +75,36 @@ fun main() {
       entry.name.startsWith("Reserved")
   }
 
-  for (entry in finalizedIanaRcodeEntries) {
-    println("""
-      val ${entry.name.uppercase()} = DnsRcode(${entry.rcode}, "${entry.name.uppercase()}", "${entry.description}")
-    """.trimIndent())
+  val sourceFilePath = Path.of("../dnsk-core/src/main/kotlin/dnsk/core/DnsRcode.kt")
+  val originalSourceLines = sourceFilePath.readLines(StandardCharsets.UTF_8)
+  val generatedSourceLines = ArrayList(originalSourceLines)
+
+  val beginGeneratedCodeIndex = originalSourceLines.indexOfFirst { it.trim() == "// START GENERATED CODE" }
+  while (!generatedSourceLines[beginGeneratedCodeIndex + 1].contains("// END GENERATED CODE")) {
+    generatedSourceLines.removeAt(beginGeneratedCodeIndex + 1)
   }
 
-  println("""
-    val ianaAssignedRcodes: Map<Int, DnsRcode> = listOf(
-      ${finalizedIanaRcodeEntries.map { it.name.uppercase() }.joinToString(",")}
-    ).associateBy { it.id }
-  """.trimIndent())
+  val linesToAdd = mutableListOf<String>()
+  for (entry in finalizedIanaRcodeEntries) {
+    linesToAdd.add("""
+      val ${entry.name.uppercase()} = DnsRcode(${entry.rcode}, "${entry.name.uppercase()}", "${entry.description}")
+    """.trimIndent().prependIndent("    "))
+  }
+
+  linesToAdd.add("")
+  linesToAdd.add("val ianaAssignedRcodes: Map<Int, DnsRcode> = listOf(".prependIndent("    "))
+  for (indexed in finalizedIanaRcodeEntries.withIndex()) {
+    linesToAdd.add(buildString {
+      append("      ")
+      append(indexed.value.name.uppercase())
+      if (indexed.index + 1 != finalizedIanaRcodeEntries.size) {
+        append(",")
+      }
+    })
+  }
+  linesToAdd.add(").associateBy { it.id }".prependIndent("    "))
+
+  generatedSourceLines.addAll(beginGeneratedCodeIndex + 1, linesToAdd)
+
+  sourceFilePath.writeLines(generatedSourceLines, StandardCharsets.UTF_8)
 }

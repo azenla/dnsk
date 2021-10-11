@@ -2,6 +2,7 @@ package dnsk.core
 
 class DnsRcode(val id: Int, val name: String = "RCODE_${id}", val description: String = "") {
   companion object {
+    // START GENERATED CODE
     val NOERROR = DnsRcode(0, "NOERROR", "No Error")
     val FORMERR = DnsRcode(1, "FORMERR", "Format Error")
     val SERVFAIL = DnsRcode(2, "SERVFAIL", "Server Failure")
@@ -22,6 +23,7 @@ class DnsRcode(val id: Int, val name: String = "RCODE_${id}", val description: S
     val BADALG = DnsRcode(21, "BADALG", "Algorithm not supported")
     val BADTRUNC = DnsRcode(22, "BADTRUNC", "Bad Truncation")
     val BADCOOKIE = DnsRcode(23, "BADCOOKIE", "Bad/missing Server Cookie")
+
     val ianaAssignedRcodes: Map<Int, DnsRcode> = listOf(
       NOERROR,
       FORMERR,
@@ -44,6 +46,7 @@ class DnsRcode(val id: Int, val name: String = "RCODE_${id}", val description: S
       BADTRUNC,
       BADCOOKIE
     ).associateBy { it.id }
+    // END GENERATED CODE
 
     fun decode(id: Int): DnsRcode = ianaAssignedRcodes[id] ?: DnsRcode(id)
   }
