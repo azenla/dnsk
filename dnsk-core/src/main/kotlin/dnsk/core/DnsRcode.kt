@@ -1,4 +1,4 @@
-package dnsk.api
+package dnsk.core
 
 class DnsRcode(val id: Int, val name: String = "RCODE_${id}", val description: String = "") {
   companion object {
@@ -11,7 +11,7 @@ class DnsRcode(val id: Int, val name: String = "RCODE_${id}", val description: S
     val YXDOMAIN = DnsRcode(6, "YXDOMAIN", "Name Exists when it should not")
     val YXRRSET = DnsRcode(7, "YXRRSET", "RR Set Exists when it should not")
     val NXRRSET = DnsRcode(8, "NXRRSET", "RR Set that should exist does not")
-    val NOTAUTH_NOTAUTH = DnsRcode(9, "NOTAUTH_NOTAUTH", "Server Not Authoritative for zone/Not Authorized")
+    val NOTAUTH = DnsRcode(9, "NOTAUTH", "Server Not Authoritative for zone/Not Authorized")
     val NOTZONE = DnsRcode(10, "NOTZONE", "Name not contained in zone")
     val DSOTYPENI = DnsRcode(11, "DSOTYPENI", "DSO-TYPE Not Implemented")
     val BADVERS_BADSIG = DnsRcode(16, "BADVERS_BADSIG", "Bad OPT Version/TSIG Signature Failure")
@@ -22,7 +22,6 @@ class DnsRcode(val id: Int, val name: String = "RCODE_${id}", val description: S
     val BADALG = DnsRcode(21, "BADALG", "Algorithm not supported")
     val BADTRUNC = DnsRcode(22, "BADTRUNC", "Bad Truncation")
     val BADCOOKIE = DnsRcode(23, "BADCOOKIE", "Bad/missing Server Cookie")
-
     val ianaAssignedRcodes: Map<Int, DnsRcode> = listOf(
       NOERROR,
       FORMERR,
@@ -33,7 +32,7 @@ class DnsRcode(val id: Int, val name: String = "RCODE_${id}", val description: S
       YXDOMAIN,
       YXRRSET,
       NXRRSET,
-      NOTAUTH_NOTAUTH,
+      NOTAUTH,
       NOTZONE,
       DSOTYPENI,
       BADVERS_BADSIG,

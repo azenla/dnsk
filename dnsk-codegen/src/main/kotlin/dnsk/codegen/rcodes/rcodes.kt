@@ -1,5 +1,5 @@
 @file:JvmName("RcodeGenerator")
-package dnsk.codegen
+package dnsk.codegen.rcodes
 
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
@@ -25,7 +25,7 @@ data class IanaRcodeEntry(
 
 @ExperimentalSerializationApi
 fun main() {
-  val ianaRcodesCsvFile = Path.of("src/codegen/resources/iana/rcodes.csv")
+  val ianaRcodesCsvFile = Path.of("src/main/resources/iana/rcodes.csv")
   val ianaRcodesCsvText = ianaRcodesCsvFile.readText(StandardCharsets.UTF_8)
   val decodedIanaRcodeEntries = Csv {
     hasHeaderRecord = true
@@ -58,7 +58,7 @@ fun main() {
     if (entries.size > 1) {
       finalizedIanaRcodeEntries.add(IanaRcodeEntry(
         rcode = rcode,
-        name = entries.joinToString("_") { it.name },
+        name = entries.distinctBy { it.name }.joinToString("_") { it.name },
         description = entries.joinToString("/") { it.description },
         reference = entries.joinToString("/") { it.reference }
       ))
@@ -73,7 +73,6 @@ fun main() {
   }
 
   for (entry in finalizedIanaRcodeEntries) {
-    //language=kotlin
     println("""
       val ${entry.name.uppercase()} = DnsRcode(${entry.rcode}, "${entry.name.uppercase()}", "${entry.description}")
     """.trimIndent())

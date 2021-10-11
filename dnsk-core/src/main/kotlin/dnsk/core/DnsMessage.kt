@@ -1,3 +1,3 @@
-package dnsk.api
+package dnsk.core
 
 class DnsMessage {}
